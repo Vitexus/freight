@@ -2,6 +2,8 @@ if tty -s; then
     TTY="1"
 fi
 
+source colors.sh
+
 # Fetch the given field from the package's control file.
 apt_info() {
     grep -E -i "^$2:" "$1" | cut -d: -f2- | awk '{print $1}'
@@ -85,6 +87,13 @@ apt_cache() {
     VALID_DATE="Tue, 30 Nov 2038 00:00:00 UTC"
     DIST="$1"
     SUITE="${SUITE:-$DIST}"
+
+    
+    if [ $VERBOSE=="1" ] ; then
+	echo -n "# [freight] Rebuiding cache for "
+	YellowColor "$SUITE\n"
+    fi
+
 
     # Generate a timestamp to use in this build's directory name.
     DATE="$(date +%Y%m%d%H%M%S%N)"
@@ -338,11 +347,19 @@ EOF
     POOL="pool/$DIST/$COMP/$PREFIX/$SOURCE"
     mkdir -p "$VARCACHE/$POOL"
     if [ ! -f "$VARCACHE/$POOL/$FILENAME" ]; then
-        if [ "$PACKAGE" != "$FILENAME" ]; then
-            echo "# [freight] adding $PACKAGE to pool (as $FILENAME)" >&2
-        else
-            echo "# [freight] adding $PACKAGE to pool" >&2
-        fi
+        if [ $VERBOSE=="1" ] ; then
+            if [ "$PACKAGE" != "$FILENAME" ]; then
+	        echo -n "# [freight] adding " >&2 
+	        GreenColor $PACKAGE  >&2
+	        echo -n " to pool (as " >&2
+		YellowColor $FILENAME >&2
+	        echo  ")" >&2
+            else
+	        echo -n "# [freight] adding " >&2
+		GreenColor $PACKAGE  >&2
+	        echo  " to pool" >&2
+            fi
+	fi
         ln "$DISTCACHE/.refs/$COMP/$PACKAGE" "$VARCACHE/$POOL/$FILENAME"
     fi
 
@@ -432,7 +449,9 @@ apt_cache_source() {
     mkdir -p "$VARCACHE/$POOL"
     for FILENAME in "$DSC_FILENAME" "$ORIG_FILENAME" "$DIFF_FILENAME" "$TAR_FILENAME"; do
         if [ -f "$DISTCACHE/.refs/$COMP/$FILENAME" ] && ! [ -f "$VARCACHE/$POOL/$FILENAME" ]; then
-            echo "# [freight] adding $FILENAME to pool" >&2
+            echo -n "# [freight] adding "; >&2
+	    GreenColor $FILENAME >&2
+	    echo -n "to pool" >&2
             ln "$DISTCACHE/.refs/$COMP/$FILENAME" "$VARCACHE/$POOL"
         fi
     done
