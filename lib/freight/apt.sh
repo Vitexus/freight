@@ -2,7 +2,7 @@ if tty -s; then
     TTY="1"
 fi
 
-source colors.sh
+, colors.sh
 
 # Fetch the given field from the package's control file.
 apt_info() {
@@ -89,7 +89,8 @@ apt_cache() {
     SUITE="${SUITE:-$DIST}"
 
     
-    if [ $VERBOSE=="1" ] ; then
+    if [ "$VERBOSE" == "1" ] ;
+    then
 	echo -n "# [freight] Rebuiding cache for "
 	YellowColor "$SUITE\n"
     fi
@@ -297,7 +298,8 @@ apt_cache_binary() {
     if ! { [ -e "$CONTROL" ] &&
         [ "$(apt_binary_filesize "$CONTROL")" -eq "$(apt_filesize "$VARLIB/apt/$DIST/$PATHNAME")" ]; }; then
         dpkg-deb -e "$VARLIB/apt/$DIST/$PATHNAME" "$TMP/DEBIAN" || {
-            echo "# [freight] skipping invalid Debian package $PATHNAME" >&2
+            echo "# [freight] skipping invalid Debian package " >&2
+	    RedColor $PATHNAME >&2
             return
         }
         {
@@ -347,19 +349,17 @@ EOF
     POOL="pool/$DIST/$COMP/$PREFIX/$SOURCE"
     mkdir -p "$VARCACHE/$POOL"
     if [ ! -f "$VARCACHE/$POOL/$FILENAME" ]; then
-        if [ $VERBOSE=="1" ] ; then
-            if [ "$PACKAGE" != "$FILENAME" ]; then
-	        echo -n "# [freight] adding " >&2 
-	        GreenColor $PACKAGE  >&2
-	        echo -n " to pool (as " >&2
-		YellowColor $FILENAME >&2
-	        echo  ")" >&2
-            else
-	        echo -n "# [freight] adding " >&2
-		GreenColor $PACKAGE  >&2
-	        echo  " to pool" >&2
-            fi
-	fi
+        if [ "$PACKAGE" != "$FILENAME" ]; then
+            echo -n "# [freight] adding " >&2 
+	    GreenColor $PACKAGE  >&2
+	    echo -n " to pool (as " >&2
+	    YellowColor $FILENAME >&2
+	    echo  ")" >&2
+        else
+            echo -n "# [freight] adding " >&2
+	    GreenColor $PACKAGE  >&2
+	    echo  " to pool" >&2
+        fi
         ln "$DISTCACHE/.refs/$COMP/$PACKAGE" "$VARCACHE/$POOL/$FILENAME"
     fi
 
@@ -451,7 +451,7 @@ apt_cache_source() {
         if [ -f "$DISTCACHE/.refs/$COMP/$FILENAME" ] && ! [ -f "$VARCACHE/$POOL/$FILENAME" ]; then
             echo -n "# [freight] adding "; >&2
 	    GreenColor $FILENAME >&2
-	    echo -n "to pool" >&2
+	    echo " to pool" >&2
             ln "$DISTCACHE/.refs/$COMP/$FILENAME" "$VARCACHE/$POOL"
         fi
     done

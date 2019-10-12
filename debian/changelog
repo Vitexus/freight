@@ -1,3 +1,9 @@
+freight (0.3.12.1) UNRELEASED; urgency=medium
+
+  * Print colorized messages only in verbose mode
+
+ -- vitex <vitex@hosting.vitexsoftware.cz>  Thu, 10 Oct 2019 10:37:39 +0200
+
 freight (0.3.12) stable; urgency=low
 
   * bump version to 0.3.12 (Michael Moll, 6f31de8)
