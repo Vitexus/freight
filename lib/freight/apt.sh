@@ -2,8 +2,6 @@ if tty -s; then
     TTY="1"
 fi
 
-, colors.sh
-
 # Fetch the given field from the package's control file.
 apt_info() {
     grep -E -i "^$2:" "$1" | cut -d: -f2- | awk '{print $1}'

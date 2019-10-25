@@ -7,6 +7,7 @@
 #/   -c <conf>, --conf=<conf> config file to parse
 #/   -v, --verbose            verbose mode
 #/   -e, --add-error          exit with error if package already added
+#/   -f, --fresh-only         remove older versions of package
 #/   -h, --help               show this help message
 
 set -e
@@ -21,6 +22,7 @@ while [ "$#" -gt 0 ]; do
         -c*) CONF="$(echo "$1" | cut -c"3-")" shift ;;
         --conf=*) CONF="$(echo "$1" | cut -c"8-")" shift ;;
         -v | --verbose) VERBOSE=1 shift ;;
+        -f | --fresh-only) FRESH=1 shift ;;
         -e | --add-error) FREIGHT_ADD_ERROR="YES" shift ;;
         -h | --help) usage 0 ;;
         -*)
@@ -32,6 +34,7 @@ while [ "$#" -gt 0 ]; do
 done
 
 . "$(dirname "$(dirname "$0")")/lib/freight/conf.sh"
+. "$(dirname "$(dirname "$0")")/lib/freight/colors.sh"
 
 # The non-option argument(s) following the last option are package files.
 # Binary packages have only one but source packages require two or three.
@@ -70,11 +73,32 @@ cd "$VARLIB"
 # PATHNAME.  The first two are given fairly directly to ln(1); the final one
 # is used to create appropriate success or failure messages.
 add() {
+
+    if [ "$FRESH" == "1" ] ;
+    then
+	echo "# [freight] Looking for older package versions to clean "
+	PBASE=`echo $1 | awk -F_ '{print $1}'`
+	for file in $2/${PBASE}_*
+	do
+		YellowColor "${file}\n"
+		rm ${file}
+	done
+    fi
+
     if ln "$TMP/$1" "$2/$1" 2>"$TMP/ln"; then
-        echo "# [freight] added $3 to $2${4+" as "}$4" >&2
+        if [ "$VERBOSE" == "1" ] ; then
+            echo -n "# [freight] added " >&2 
+	    GreenColor $3  >&2
+	    echo -n " to " >&2
+	    YellowColor "$2${4+" as "}$4" >&2
+	    echo  >&2
+        fi
     else
         if grep -q "File exists" "$TMP/ln"; then
-            echo "# [freight] $2 already has $3${4+" as "}$4" >&2
+            echo -n "# [freight] " >&2 
+	    echo -n $2 already has  >&2
+	    YellowColor "$3${4+" as "}$4" >&2
+	    echo  >&2
         else
             cat "$TMP/ln" >&2
         fi

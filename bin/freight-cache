@@ -70,6 +70,7 @@ done
 
 LIB="$(cd "$(dirname "$(dirname "$0")")/lib/freight" && pwd)"
 . "$LIB/conf.sh"
+. "$LIB/colors.sh"
 
 # If `GPG_PASSPHRASE_FILE` is set the specified file should exist and be
 # readable by the user running Freight.
