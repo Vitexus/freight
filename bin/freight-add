@@ -80,8 +80,8 @@ add() {
 	PBASE=`echo $1 | awk -F_ '{print $1}'`
 	for file in $2/${PBASE}_*
 	do
-		YellowColor "${file}\n"
-		rm ${file}
+		YellowColor "${file} -> ${ATTICTIR}\n"
+		mv -f ${file} ${ATTICDIR}
 	done
     fi
 

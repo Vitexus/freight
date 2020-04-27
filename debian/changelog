@@ -1,8 +1,10 @@
-freight (0.3.12.1) UNRELEASED; urgency=medium
+freight (0.3.12.2) UNRELEASED; urgency=medium
 
   * Print colorized messages only in verbose mode
+  * More verbose add messages
+ 
 
- -- vitex <vitex@hosting.vitexsoftware.cz>  Thu, 10 Oct 2019 10:37:39 +0200
+ -- vitex <vitex@hosting.vitexsoftware.cz>  Mon, 23 Mar 2020 19:24:09 +0100
 
 freight (0.3.12) stable; urgency=low
 

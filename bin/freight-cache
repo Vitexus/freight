@@ -5,7 +5,8 @@
 # actual repositories that are suitable targets for `apt-get` (and maybe
 # more in the future).
 
-#/ Usage: freight cache [-k] [-g <email>] [-p <passphrase-file>] [-a <digest-algorithm>] [-c <conf>] [-v] [-h] [<manager>/<distro>][...]
+#/ Usage: freight cache [-k] [-l]  [-g <email>] [-p <passphrase-file>] [-a <digest-algorithm>] [-c <conf>] [-v] [-h] [<manager>/<distro>][...]
+#/   -l, --latest			 add only latest versions of packages
 #/   -k, --keep                          keep unreferenced versions of packages
 #/   -g <email>, --gpg=<email>           GPG key to use, may be given multiple times
 #/   -p <passphrase file>,
@@ -59,6 +60,7 @@ while [ "$#" -gt 0 ]; do
         -c*) CONF="$(echo "$1" | cut -c"3-")" shift ;;
         --conf=*) CONF="$(echo "$1" | cut -c"8-")" shift ;;
         -v | --verbose) VERBOSE=1 shift ;;
+        -l | --latests) LATEST=1 shift ;;
         -h | --help) usage 0 ;;
         -*)
             echo "# [freight] unknown switch: $1" >&2

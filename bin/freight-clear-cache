@@ -31,6 +31,8 @@ while [ "$#" -gt 0 ]; do
 done
 
 . "$(dirname "$(dirname "$0")")/lib/freight/conf.sh"
+. "$(dirname "$(dirname "$0")")/lib/freight/colors.sh"
+
 
 # Create a working directory on the same device as the Freight cache.
 mkdir -p "$VARCACHE"
@@ -65,6 +67,14 @@ for DIR in $DIRS; do
     # From here the process is customized on a per-manager basis.
     . "$(dirname "$(dirname "$0")")/lib/freight/$MANAGER.sh"
     eval "${MANAGER}_clear_cache" "$DIST"
+
+    if [ "$VERBOSE" == "1" ] ; then
+            echo -n "# [freight] removed " >&2 
+	    GreenColor $VARCACHE  >&2
+	    echo -n " in " >&2
+	    YellowColor $DIST >&2
+	    echo  >&2
+    fi
 
 done
 
